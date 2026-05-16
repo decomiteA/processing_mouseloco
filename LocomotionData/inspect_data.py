@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore')
 
 #########################################################################
 # Put the following to True if you want to see the figures during running
-bool_plot = False
+bool_plot = True
 
 figure_path = os.path.join(os.getcwd(),'FiguresFolder')
 os.makedirs(figure_path, exist_ok=True)
