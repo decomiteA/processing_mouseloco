@@ -21,6 +21,7 @@ MainDataFolder
  
 For as many groups as you wish. 
 
+In order to run the code, you should first process the data by typing `python main_processing_script.py` then analyse it with `python main_analysis_script`. All the code is in the src folder and should be kept organized as is. There are some parameters (path, framerate, and resolution) to adjust in the headers of both scripts. 
 
 
 ## Legacy instructions
