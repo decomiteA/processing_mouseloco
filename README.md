@@ -1,13 +1,29 @@
 # README
 
-To run this pilot code, create a python virtual environement using the `requirements.txt` file. 
+To run this pilot code, create a python virtual environement using the `final_requirements.txt` file. 
 
 
 Something like this should work
 
 `python3 -m venv my_env`
 `source my_env/bin/activate`
-`pip install -r requirements.txt`
+`pip install -r final_requirements.txt`
+
+## Updated inscriptions
+
+To run this code, you have to organize your h5 raw data file in a singular folder. The different cohorts should be located in different subfolders within a 'raw' folder. The file structure should look like :
+
+MainDataFolder
+- Group1
+  - raw
+- Group2
+  - raw
+ 
+For as many groups as you wish. 
+
+
+
+## Legacy instructions
 
 
 To run the code, place the h5 files in the same folder as the file `inspect_data.py`.
