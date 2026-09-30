@@ -1,6 +1,6 @@
 # README
 
-To run this pilot code, create a python virtual environement using the `final_requirements.txt` file. 
+To run this pilot code, create a python virtual environment using the `final_requirements.txt` file. 
 
 
 Something like this should work
