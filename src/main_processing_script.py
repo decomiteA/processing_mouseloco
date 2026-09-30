@@ -18,7 +18,7 @@ input_folder = os.path.join(os.getcwd(),'..','datasets','mice','test_code')
 # You also need to change the following parameters to adjust the framerate at which the data was collected and the resolution used on the gopros.
 
 framerate = 60
-resolution = 0.003
+resolution = 0.003 # put the value 0.003 for resolution of 1080p and 0.006 for resolution of 2k
 
 output_folder = input_folder
 str_population = ["R270X","R306C","T158M","WildType"]
