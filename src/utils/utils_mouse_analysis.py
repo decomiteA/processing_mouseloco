@@ -2134,10 +2134,147 @@ def plot_step_duration_metrics_sh3(stride_duration, bins_centers, labels, bool_p
     else:
         plt.close('all')
 
-
-def plot_step_length_metrics_rett(list_metrics, bins_centers, bool_plot=False, bool_save=False, figname=None):
+def plot_all_step_length_metrics_rett(list_front, list_hind, list_left,list_right,bins_centers,bool_plot=False,bool_save=False,figname=None):
     """
-    Plots the step lengths metrics 
+    Plots the stride lengths metrics 
+    """
+    cmap = cm.plasma(np.linspace(0,1,len(list_front)))
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_front)):
+        axs.plot(bins_centers,np.nanmedian(list_front[group],axis=0), color=cmap[group])
+        axs.fill_between(bins_centers, np.nanpercentile(list_front[group],axis=0, q=25), np.nanpercentile(list_front[group],axis=0, q=75), color=cmap[group], alpha=0.5)
+    axs.set_xlabel('speed [*]'), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_front_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_front_length_all_groups.svg'), bbox_inches='tight')
+
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_front)):
+        axs.scatter(np.random.uniform(group-0.2,group+0.2,list_front[group].shape[0]), list_front[group][:,1], color=cmap[group], s=5)
+        axs.scatter(group, np.nanmean(list_front[group][:,1]), color=cmap[group], s=20)
+        axs.plot([group,group],[np.nanpercentile(list_front[group][:,1],axis=0,q=25), np.nanpercentile(list_front[group][:,1],axis=0,q=75)], color=cmap[group], lw=2)
+    axs.set_xlim([-0.5,len(list_front)-0.5]), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_front_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_front_length_all_groups.svg'), bbox_inches='tight')
+
+    length_kruskall = []
+    for ii in range(len(list_front)):
+        length_kruskall.append(list_front[ii][:,1])
+    print('============================')
+    print('Statistics front step length')
+    print('============================')
+    print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
+    print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_hind)):
+        axs.plot(bins_centers,np.nanmedian(list_hind[group],axis=0), color=cmap[group])
+        axs.fill_between(bins_centers, np.nanpercentile(list_hind[group],axis=0, q=25), np.nanpercentile(list_hind[group],axis=0, q=75), color=cmap[group], alpha=0.5)
+    axs.set_xlabel('speed [*]'), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_hind_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_hind_length_all_groups.svg'), bbox_inches='tight')
+
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_hind)):
+        axs.scatter(np.random.uniform(group-0.2,group+0.2,list_hind[group].shape[0]), list_hind[group][:,1], color=cmap[group], s=5)
+        axs.scatter(group, np.nanmean(list_hind[group][:,1]), color=cmap[group], s=20)
+        axs.plot([group,group],[np.nanpercentile(list_hind[group][:,1],axis=0,q=25), np.nanpercentile(list_hind[group][:,1],axis=0,q=75)], color=cmap[group], lw=2)
+    axs.set_xlim([-0.5,len(list_hind)-0.5]), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_hind_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_hind_length_all_groups.svg'), bbox_inches='tight')
+
+    length_kruskall = []
+    for ii in range(len(list_hind)):
+        length_kruskall.append(list_hind[ii][:,1])
+    print('===========================')
+    print('Statistics hind step length')
+    print('===========================')
+    print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
+    print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_right)):
+        axs.plot(bins_centers,np.nanmedian(list_right[group],axis=0), color=cmap[group])
+        axs.fill_between(bins_centers, np.nanpercentile(list_right[group],axis=0, q=25), np.nanpercentile(list_right[group],axis=0, q=75), color=cmap[group], alpha=0.5)
+    axs.set_xlabel('speed [*]'), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_right_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_right_length_all_groups.svg'), bbox_inches='tight')
+
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_right)):
+        axs.scatter(np.random.uniform(group-0.2,group+0.2,list_right[group].shape[0]), list_right[group][:,1], color=cmap[group], s=5)
+        axs.scatter(group, np.nanmean(list_right[group][:,1]), color=cmap[group], s=20)
+        axs.plot([group,group],[np.nanpercentile(list_right[group][:,1],axis=0,q=25), np.nanpercentile(list_right[group][:,1],axis=0,q=75)], color=cmap[group], lw=2)
+    axs.set_xlim([-0.5,len(list_right)-0.5]), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_right_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_right_length_all_groups.svg'), bbox_inches='tight')
+
+    length_kruskall = []
+    for ii in range(len(list_right)):
+        length_kruskall.append(list_right[ii][:,1])
+    print('============================')
+    print('Statistics right step length')
+    print('============================')
+    print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
+    print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_left)):
+        axs.plot(bins_centers,np.nanmedian(list_left[group],axis=0), color=cmap[group])
+        axs.fill_between(bins_centers, np.nanpercentile(list_left[group],axis=0, q=25), np.nanpercentile(list_left[group],axis=0, q=75), color=cmap[group], alpha=0.5)
+    axs.set_xlabel('speed [*]'), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_left_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_step_left_length_all_groups.svg'), bbox_inches='tight')
+
+
+    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    axs.spines[['top','right']].set_visible(False)
+    for group in range(len(list_left)):
+        axs.scatter(np.random.uniform(group-0.2,group+0.2,list_left[group].shape[0]), list_left[group][:,1], color=cmap[group], s=5)
+        axs.scatter(group, np.nanmean(list_left[group][:,1]), color=cmap[group], s=20)
+        axs.plot([group,group],[np.nanpercentile(list_left[group][:,1],axis=0,q=25), np.nanpercentile(list_left[group][:,1],axis=0,q=75)], color=cmap[group], lw=2)
+    axs.set_xlim([-0.5,len(list_left)-0.5]), axs.set_ylabel('step length [*]')
+    plt.tight_layout()
+    if bool_save:
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_left_length_all_groups.png'), bbox_inches='tight')
+        fig.savefig(os.path.join(figure_path,f'{figname}_ind_step_left_length_all_groups.svg'), bbox_inches='tight')
+
+    length_kruskall = []
+    for ii in range(len(list_left)):
+        length_kruskall.append(list_left[ii][:,1])
+    print('===========================')
+    print('Statistics left step length')
+    print('===========================')
+    print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
+    print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
+
+
+def plot_stride_length_metrics_rett(list_metrics, bins_centers, bool_plot=False, bool_save=False, figname=None):
+    """
+    Plots the stride lengths metrics 
     """
     cmap = cm.plasma(np.linspace(0,1,len(list_metrics)))
     fig, axs = plt.subplots(1,1,figsize=(3,3))
@@ -2255,7 +2392,7 @@ def plot_step_width_metrics_rett(list_front, list_hind, bins_centers, bool_plot=
         plt.close('all')
     
 
-def plot_step_duration_metrics_rett(list_metrics, bins_centers, bool_plot=False, bool_save=False, figname=None):
+def plot_stride_duration_metrics_rett(list_metrics, bins_centers, bool_plot=False, bool_save=False, figname=None):
     """
     Plots the step lengths metrics 
 
@@ -3399,7 +3536,7 @@ def plot_contact_mode_rett(list_duration, list_contact_mode, bins_centers, bool_
     print(scipy.stats.kruskal(diagonal_contact_kruskall[0], diagonal_contact_kruskall[1], diagonal_contact_kruskall[2]))
     print(spph.posthoc_dunn(diagonal_contact_kruskall, p_adjust="fdr_bh"))
 
-    fig, axs = plt.subplots(1,1,figsize=(3,3))
+    fig, axs = plt.subplots(1,1,figsize=(3,3))  
     axs.spines[['top','right']].set_visible(False)
     for group in range(len(list_duration)):
         axs.scatter(np.random.uniform(group-0.2,group+0.2,list_contact_mode[group].shape[0]), list_contact_mode[group][:,1,3], color=cmap[group], s=5)
