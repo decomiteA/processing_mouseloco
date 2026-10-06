@@ -167,9 +167,11 @@ with open(os.path.join("..","results","metrics","mice","female_rett","test_stats
     ### Velocity-dependent metrics ###
     ##################################
     list_stride_length, list_stride_duration, list_front_width, list_hind_width = [], [], [], []
+    list_front_step_length, list_hind_step_length, list_left_step_length, list_right_step_length = [], [], [], []
     for group in range(n_group):
         matrix_stride_length, matrix_stride_duration = np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))), np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers)))
         matrix_front_width, matrix_hind_width = np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))), np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers)))
+        matrix_front_length, matrix_hind_length, matrix_left_length, matrix_right_length = np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))), np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))), np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))), np.zeros((len(np.unique(list_metrics[group][:,0])), len(bins_centers))) 
         for animal in range(matrix_stride_length.shape[0]):
             local_metrics_data = list_metrics[group][list_metrics[group][:,0]==animal,:]
             for bin in range(len(bins_centers)):
@@ -179,16 +181,27 @@ with open(os.path.join("..","results","metrics","mice","female_rett","test_stats
 
                 idx_front = np.where((np.abs(local_metrics_data[:,6])>bins_limits[bin]) & (np.abs(local_metrics_data[:,6])<bins_limits[bin+1]) & (((local_metrics_data[:,1]==1) & (local_metrics_data[:,2]==0)) | ((local_metrics_data[:,1]==0) & (local_metrics_data[:,2]==1))))[0]
                 idx_hind = np.where((np.abs(local_metrics_data[:,6])>bins_limits[bin]) & (np.abs(local_metrics_data[:,6])<bins_limits[bin+1]) & (((local_metrics_data[:,1]==3) & (local_metrics_data[:,2]==2)) | ((local_metrics_data[:,1]==2) & (local_metrics_data[:,2]==3))))[0]
+                idx_left = np.where((np.abs(local_metrics_data[:,6])>bins_limits[bin]) & (np.abs(local_metrics_data[:,6])<bins_limits[bin+1]) & (((local_metrics_data[:,1]==2) & (local_metrics_data[:,2]==0))))[0]
+                idx_right = np.where((np.abs(local_metrics_data[:,6])>bins_limits[bin]) & (np.abs(local_metrics_data[:,6])<bins_limits[bin+1]) & (((local_metrics_data[:,1]==3) & (local_metrics_data[:,2]==1))))[0]
                 matrix_front_width[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_front,5]))
                 matrix_hind_width[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_hind,5]))
+                matrix_front_length[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_front,4]))
+                matrix_hind_length[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_hind,4]))
+                matrix_left_length[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_left,4]))
+                matrix_right_length[animal,bin] = np.nanmean(np.abs(local_metrics_data[idx_right,4]))
         list_stride_length.append(matrix_stride_length)
         list_stride_duration.append(matrix_stride_duration)
         list_front_width.append(matrix_front_width)
         list_hind_width.append(matrix_hind_width)
+        list_front_step_length.append(matrix_front_length)
+        list_hind_step_length.append(matrix_hind_length)
+        list_left_step_length.append(matrix_left_length)
+        list_right_step_length.append(matrix_right_length)
 
-    plot_step_length_metrics_rett(list_stride_length, bins_centers, bool_plot=bool_plot, bool_save=bool_save,figname="length")
-    plot_step_duration_metrics_rett(list_stride_duration, bins_centers, bool_plot=bool_plot, bool_save=bool_save,figname="duration")
+    plot_stride_length_metrics_rett(list_stride_length, bins_centers, bool_plot=bool_plot, bool_save=bool_save,figname="length")
+    plot_stride_duration_metrics_rett(list_stride_duration, bins_centers, bool_plot=bool_plot, bool_save=bool_save,figname="duration")
     plot_step_width_metrics_rett(list_front_width, list_hind_width, bins_centers, bool_plot=bool_plot, bool_save=bool_save,figname="width")
+    plot_all_step_length_metrics_rett(list_front_step_length,list_hind_step_length,list_left_step_length,list_right_step_length,bins_centers,bool_plot=bool_plot,bool_save=bool_save,figname="step_length")
 
     list_veldp_metrics = [] 
     for group in range(n_group):
