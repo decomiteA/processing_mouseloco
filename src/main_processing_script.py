@@ -17,11 +17,11 @@ input_folder = os.path.join(os.getcwd(),'..','datasets','mice','test_code')
 
 # You also need to change the following parameters to adjust the framerate at which the data was collected and the resolution used on the gopros.
 
-framerate = 60
-resolution = 0.003 # put the value 0.003 for resolution of 1080p and 0.006 for resolution of 2k
+framerate = 30
+resolution = 0.0006
 
 output_folder = input_folder
-str_population = ["R270X","R306C","T158M","WildType"]
+str_population = ["WildType","R270X","ABE"]
 
 #############################
 # Preprocessing of the data #
@@ -64,8 +64,8 @@ for population in range(len(str_population)):
 
     for jj in tqdm(range(len(list_total_matrix))):
         video_data = list_total_matrix[jj] * resolution
-        video_data_with_speed = compute_velocity_markers(video_data.T ,framerate=framerate).T
-        time_vector = np.linspace(0,1/framerate*video_data.shape[2], video_data.shape[2])
+        video_data_with_speed = compute_velocity_markers(video_data.T).T
+        time_vector = np.linspace(0,1/30*video_data.shape[2], video_data.shape[2])
         head_velocity = video_data_with_speed[2,0,:]
 
 
@@ -104,8 +104,8 @@ for population in range(len(str_population)):
             bool_straight = (len(idx_in)/len(local_angle_degree)> 0.75)
 
             if bool_straight:
-                rotated_local_data = compute_velocity_markers(rotated_local_data.T ,framerate=framerate).T 
-                local_foot_contact = get_foot_contact(rotated_local_data, framerate=framerate,bool_rett=True)
+                rotated_local_data = compute_velocity_markers(rotated_local_data.T).T 
+                local_foot_contact = get_foot_contact(rotated_local_data,bool_rett=True)
                 tot_foot_contact = np.concatenate((tot_foot_contact, local_foot_contact,np.full((2,4,1),np.nan)),2)
                 tot_foot_raw = np.concatenate((tot_foot_raw, rotated_local_data, np.full((4,6,1),np.nan)),2)
                 tot_time = np.concatenate((tot_time, np.expand_dims(np.array([idx_begin, idx_end]),0)),0)
