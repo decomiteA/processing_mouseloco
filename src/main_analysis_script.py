@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from utils.utils_mouse_analysis import *
 warnings.filterwarnings('ignore')
-print('hi')
+
 # Toggle those booleans if you want to have the figures generated and/or saved 
 bool_save, bool_plot = False, True
 # Change the following line to save the statistical analysis to a new text file
@@ -18,7 +18,7 @@ with open(os.path.join("..","results","metrics","mice","female_rett","test_stats
     sys.stdout = f   
 
     # Change the following line to match the different cohorts you want to analyse
-    str_population = ["WildType","R270X","R306C","T158M"]
+    str_population = ["WildType","R270X","ABE"]
     n_group = len(str_population)
     # Change this path to the data you want to analyse (ie the output of the processing script)
     input_path = os.path.join(os.getcwd(),'..','datasets','mice','test_code','io_processed')
