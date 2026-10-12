@@ -5,6 +5,8 @@ import scipy.stats
 import scipy.io as spio
 from tqdm import tqdm
 import matplotlib.pyplot as plt 
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
 import scikit_posthocs as spph
 import scipy.signal as signal
 import matplotlib.cm as cm
@@ -1054,6 +1056,69 @@ def plot_interlimb_coordination_rett(list_phasor_data, bins_centers, bool_plot=F
     print('================')
     print(scipy.stats.kruskal(leg3_kruskall[0], leg3_kruskall[1], leg3_kruskall[2]))
     print(spph.posthoc_dunn(leg3_kruskall, p_adjust="fdr_bh"))
+
+    # Linear mixed models - We need one per leg in this case
+
+    group_names = ["WT","Mutants","Rescue"]
+    records = [] 
+    for g_idx, matrix in enumerate(list_phasor_data):
+        n_animals, n_bins, n_legs = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,0]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the front left leg')
+    print(lmm_fit.summary())
+
+    records = [] 
+    for g_idx, matrix in enumerate(list_phasor_data):
+        n_animals, n_bins, n_legs = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,1]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the hind right leg')
+    print(lmm_fit.summary())
+
+    records = [] 
+    for g_idx, matrix in enumerate(list_phasor_data):
+        n_animals, n_bins, n_legs = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,2]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the hind left leg')
+    print(lmm_fit.summary())
 
     if bool_plot:
         plt.show()
@@ -2238,6 +2303,27 @@ def plot_all_step_length_metrics_rett(list_front, list_hind, list_left,list_righ
     print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
     print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
 
+    group_names = ["WT","Mutants","Rescue"]
+    records = [] 
+    for g_idx, matrix in enumerate(list_right):
+        n_animals, n_bins = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the mixed models for the right step length')
+    print(lmm_fit.summary())
+
     fig, axs = plt.subplots(1,1,figsize=(3,3))
     axs.spines[['top','right']].set_visible(False)
     for group in range(len(list_left)):
@@ -2248,7 +2334,6 @@ def plot_all_step_length_metrics_rett(list_front, list_hind, list_left,list_righ
     if bool_save:
         fig.savefig(os.path.join(figure_path,f'{figname}_step_left_length_all_groups.png'), bbox_inches='tight')
         fig.savefig(os.path.join(figure_path,f'{figname}_step_left_length_all_groups.svg'), bbox_inches='tight')
-
 
     fig, axs = plt.subplots(1,1,figsize=(3,3))
     axs.spines[['top','right']].set_visible(False)
@@ -2270,8 +2355,28 @@ def plot_all_step_length_metrics_rett(list_front, list_hind, list_left,list_righ
     print('===========================')
     print(scipy.stats.kruskal(length_kruskall[0], length_kruskall[1], length_kruskall[2]))
     print(spph.posthoc_dunn(length_kruskall, p_adjust="fdr_bh"))
+    group_names = ["WT","Mutants","Rescue"]
+    records = [] 
+    for g_idx, matrix in enumerate(list_left):
+        n_animals, n_bins = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the mixed models for the left step length')
+    print(lmm_fit.summary())
 
-
+import pandas as pd
 def plot_stride_length_metrics_rett(list_metrics, bins_centers, bool_plot=False, bool_save=False, figname=None):
     """
     Plots the stride lengths metrics 
@@ -2287,6 +2392,26 @@ def plot_stride_length_metrics_rett(list_metrics, bins_centers, bool_plot=False,
     if bool_save:
         fig.savefig(os.path.join(figure_path,f'{figname}_stride_length_all_groups.png'), bbox_inches='tight')
         fig.savefig(os.path.join(figure_path,f'{figname}_stride_length_all_groups.svg'), bbox_inches='tight')
+    group_names = ["WT","Mutants","Rescue"]
+    records = [] 
+    for g_idx, matrix in enumerate(list_metrics):
+        n_animals, n_bins = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear mixed models for the stride length')
+    print(lmm_fit.summary())
 
 
     fig, axs = plt.subplots(1,1,figsize=(3,3))
@@ -3577,6 +3702,68 @@ def plot_contact_mode_rett(list_duration, list_contact_mode, bins_centers, bool_
     print('=========================')
     print(scipy.stats.kruskal(triple_contact_kruskall[0], triple_contact_kruskall[1], triple_contact_kruskall[2]))
     print(spph.posthoc_dunn(triple_contact_kruskall, p_adjust="fdr_bh"))
+
+    # Running the mixed models analysis
+    group_names = ["WT","Mutants","Rescue"]
+    records = [] 
+    for g_idx, matrix in enumerate(list_contact_mode):
+        n_animals, n_bins, c_mode = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,2]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the diagonal contact')
+    print(lmm_fit.summary())
+
+    records = [] 
+    for g_idx, matrix in enumerate(list_contact_mode):
+        n_animals, n_bins, c_mode = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,3]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the other two contact')
+    print(lmm_fit.summary())
+
+    records = [] 
+    for g_idx, matrix in enumerate(list_contact_mode):
+        n_animals, n_bins, c_mode = matrix.shape
+        for a_idx in range(n_animals):
+            for b_idx in range(n_bins):
+                val = matrix[a_idx, b_idx,4]
+                if not np.isnan(val):
+                    records.append({
+                        'animal_id':f"mouse{g_idx}_{a_idx}",
+                        "genotype": group_names[g_idx],
+                        "speed":bins_centers[b_idx],
+                        "stride_length":val
+                    })
+    
+    df = pd.DataFrame(records)
+    df['genotype'] = pd.Categorical(df['genotype'], categories=group_names)
+    lmm_fit = smf.mixedlm("stride_length ~ speed + genotype", df, groups=df["animal_id"]).fit()
+    print('Summary of the linear model for the triple contact')
+    print(lmm_fit.summary())
     
     if bool_plot:
         plt.show()
