@@ -11,7 +11,7 @@ from utils.utils_mouse_analysis import *
 warnings.filterwarnings('ignore')
 
 # Toggle those booleans if you want to have the figures generated and/or saved 
-bool_save, bool_plot = False, True
+bool_save, bool_plot = False, False
 # Change the following line to save the statistical analysis to a new text file
 with open(os.path.join("..","results","metrics","mice","female_rett","test_stats.txt"), "w") as f:
     original_stdout = sys.stdout  
